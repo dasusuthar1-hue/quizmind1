@@ -4,7 +4,7 @@ const path = require('path');
 const crypto = require('crypto');
 
 const PORT = Number(process.env.PORT || 3000);
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'change-this-password';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Love12';
 const ROOT = __dirname;
 const DB_FILE = path.join(ROOT, 'data', 'questions.json');
 const sessions = new Map();
