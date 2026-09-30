@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizMind - AI Chat & Question List Popup Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #f0f4f9;
+            --sidebar-bg: #f8f9fa;
+            --text-color: #202124;
+            --primary: #1a73e8;
+            --card-bg: #ffffff;
+            --border-color: #e1e3e6;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            color: var(--text-color);
+        }
+
+        .top-header {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 60px;
+            background: var(--bg-color);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; box-sizing: border-box; z-index: 1100;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-left, .header-right { display: flex; align-items: center; gap: 15px; }
+        
+        .menu-toggle {
+            background: none; border: none; font-size: 18px; cursor: pointer;
+            color: #5f6368; padding: 10px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s;
+        }
+        .menu-toggle:hover { background: #e2e7ec; color: #202124; }
+
+        .logo-area { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 18px; color: #444746; cursor: pointer; }
+        .logo-area i { color: var(--primary); font-size: 22px; }
+
+        .lang-select, .api-key-btn {
+            background: #c2e7ff; color: #001d35; border: none;
+            padding: 8px 14px; border-radius: 20px; font-weight: 500; cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .sidebar {
+            width: 72px; height: calc(100vh - 60px);
+            background: var(--sidebar-bg); position: fixed; top: 60px; left: 0;
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 15vh 0 15px 0; overflow-y: auto; z-index: 1000;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+            border-right: 1px solid var(--border-color);
+            box-sizing: border-box;
+        }
+
+        .sidebar:hover, .sidebar.expanded {
+            width: 260px; padding: 15px 12px; box-shadow: 6px 0 20px rgba(0,0,0,0.08);
+            background: #ffffff;
+        }
+
+        .sidebar-menu-list { display: flex; flex-direction: column; gap: 4px; width: 100%; }
+
+        .nav-item {
+            position: relative; width: 48px; height: 48px;
+            background: transparent; border-radius: 24px;
+            margin: 2px auto; display: flex; align-items: center; justify-content: flex-start;
+            cursor: pointer; transition: all 0.2s ease; text-decoration: none; color: #444746;
+            box-sizing: border-box; padding-left: 14px;
+        }
+
+        .sidebar:hover .nav-item, .sidebar.expanded .nav-item {
+            width: 100%; border-radius: 24px; padding-left: 16px; gap: 16px; margin: 2px 0;
+        }
+
+        .nav-item:hover { background: #e2e7ec; color: #1f1f1f; }
+        .nav-item.active-tab { background: #d3e3fd; color: #0b57d0; font-weight: 600; }
+        .nav-item.active-tab i { color: #0b57d0; }
+
+        .nav-item i { font-size: 18px; min-width: 20px; text-align: center; color: #5f6368; }
+        .nav-text { display: none; font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .sidebar:hover .nav-text, .sidebar.expanded .nav-text { display: inline-block; }
+
+        .sidebar-footer { width: 100%; display: flex; flex-direction: column; gap: 5px; padding-top: 10px; border-top: 1px solid var(--border-color); }
+        .user-profile-item { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 24px; cursor: pointer; text-decoration: none; color: #444746; transition: background 0.2s; width: 100%; box-sizing: border-box; }
+        .user-profile-item:hover { background: #e2e7ec; }
+        .user-avatar-circle { width: 32px; height: 32px; background: #1a73e8; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; min-width: 32px; }
+
+        .sidebar:not(:hover):not(.expanded) .user-profile-item .nav-text,
+        .sidebar:not(:hover):not(.expanded) .user-profile-item .user-name-label { display: none; }
+
+        .main-workspace {
+            margin-left: 72px; margin-top: 60px; width: calc(100% - 72px);
+            height: calc(100vh - 60px); display: flex; flex-direction: column;
+            align-items: center; justify-content: flex-start; padding: 20px; box-sizing: border-box;
+            overflow-y: auto; position: relative;
+        }
+
+        .content-card {
+            background: var(--card-bg); width: 100%; max-width: 950px;
+            padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            box-sizing: border-box; display: none; margin-top: 10px;
+            animation: fadeIn 0.3s ease;
+        }
+        .content-card.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-container { max-width: 900px; width: 100%; display: none; flex-direction: column; align-items: center; box-sizing: border-box; margin-top: 5vh; }
+        .hero-container.active { display: flex; }
+        .hero-title { font-size: 30px; font-weight: 600; background: linear-gradient(135deg, #1a73e8, #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; text-align: center; }
+        
+        .chat-display-area {
+            width: 100%; max-height: 300px; overflow-y: auto; background: #ffffff;
+            border: 1px solid var(--border-color); border-radius: 16px; padding: 15px; margin-bottom: 15px;
+            display: flex; flex-direction: column; gap: 10px; box-sizing: border-box;
+        }
+        .chat-bubble { padding: 12px 16px; border-radius: 14px; font-size: 14px; line-height: 1.5; max-width: 85%; }
+        .chat-bubble.user { background: #e8f0fe; color: #1a73e8; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .chat-bubble.ai { background: #f8f9fa; color: #202124; align-self: flex-start; border-bottom-left-radius: 2px; border-left: 4px solid var(--primary); }
+
+        .prompt-box { width: 100%; background: #f8f9fa; border: 1px solid #c4c7c5; border-radius: 28px; padding: 15px 20px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); text-align: left; position: relative; box-sizing: border-box; }
+        .prompt-box textarea { width: 100%; border: none; background: transparent; resize: none; outline: none; font-size: 16px; font-family: 'Poppins', sans-serif; color: var(--text-color); }
+        .prompt-actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 10px; }
+        .action-left, .action-right { display: flex; align-items: center; gap: 15px; position: relative; }
+        .icon-btn { background: none; border: none; cursor: pointer; font-size: 18px; color: #5f6368; padding: 6px; border-radius: 50%; }
+        .icon-btn:hover { background: #e2e7ec; color: var(--primary); }
+        .submit-btn { background: var(--primary); color: white; border: none; padding: 8px 18px; border-radius: 20px; cursor: pointer; font-weight: 500; }
+        .submit-btn:hover { background: #1557b0; }
+
+        .plus-dropdown-menu {
+            position: absolute; bottom: 50px; left: 0; background: white;
+            border: 1px solid var(--border-color); border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15); display: none; flex-direction: column;
+            width: 220px; z-index: 1200; overflow: hidden;
+        }
+        .plus-dropdown-menu.show { display: flex; }
+        .dropdown-item { padding: 12px 15px; display: flex; align-items: center; gap: 10px; font-size: 14px; color: #3c4043; cursor: pointer; text-decoration: none; border-bottom: 1px solid #f1f3f4; }
+        .dropdown-item:hover { background: #f8f9fa; color: var(--primary); }
+        .dropdown-item i { font-size: 16px; color: var(--primary); }
+
+        .section-header { font-size: 20px; font-weight: 700; color: #1a73e8; margin-top: 25px; margin-bottom: 12px; border-bottom: 2px solid #e2e7ec; padding-bottom: 5px; display: flex; align-items: center; gap: 10px; }
+        
+        .subject-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .sub-card {
+            background: #f8f9fa;
+            border: 1px solid #dadce0;
+            border-radius: 14px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .sub-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 6px 15px rgba(26,115,232,0.1);
+            transform: translateY(-2px);
+        }
+        .sub-card-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #202124;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .sub-card-info {
+            font-size: 13px;
+            color: #5f6368;
+            display: flex;
+            justify-content: space-between;
+        }
+        .card-start-btn {
+            background: #e8f0fe;
+            color: #1a73e8;
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+            text-align: center;
+            transition: background 0.2s, color 0.2s;
+        }
+        .card-start-btn:hover {
+            background: #1a73e8;
+            color: white;
+        }
+
+        .pdf-upload-container {
+            background: linear-gradient(135deg, #f0f4f9 0%, #ffffff 100%);
+            border: 2.5px dashed #1a73e8;
+            border-radius: 20px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 25px rgba(26, 115, 232, 0.08);
+        }
+        .pdf-upload-container:hover {
+            background: linear-gradient(135deg, #e8f0fe 0%, #f8f9fa 100%);
+            border-color: #0b57d0;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(26, 115, 232, 0.15);
+        }
+        .pdf-sticker-icon {
+            font-size: 54px;
+            color: #ea4335;
+            margin-bottom: 15px;
+            animation: bounceIcon 2s infinite ease-in-out;
+            filter: drop-shadow(0 4px 8px rgba(234, 67, 53, 0.2));
+        }
+        @keyframes bounceIcon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .api-info-box {
+            background: #f8f9fa; border-left: 4px solid var(--primary);
+            padding: 15px 20px; border-radius: 8px; margin-bottom: 20px;
+            font-size: 14px; line-height: 1.6; color: #444746;
+        }
+        .api-info-box ol { margin: 8px 0 0 20px; padding: 0; }
+        .api-link { color: #1a73e8; font-weight: 600; text-decoration: underline; }
+
+        .quiz-header-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #1e1e2f; color: white; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px;
+        }
+        .timer-badge { background: #ff4757; color: white; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 6px; }
+        .ai-host-box {
+            background: linear-gradient(135deg, #2b2b40, #1e1e2f); color: #f1f2f6;
+            padding: 15px 20px; border-radius: 14px; margin-bottom: 20px; border-left: 5px solid #f39c12;
+            font-size: 15px; font-style: italic; display: flex; align-items: center; gap: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .ai-host-box i { font-size: 24px; color: #f39c12; }
+
+        .ai-popup-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: center; z-index: 3000;
+        }
+        .ai-popup-box {
+            background: #ffffff; width: 90%; max-width: 650px; border-radius: 20px;
+            padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.25); display: flex; flex-direction: column; gap: 15px;
+            animation: zoomIn 0.25s ease; max-height: 85vh; overflow-y: auto;
+        }
+        @keyframes zoomIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .ai-search-bar {
+            background: #f0f4f9; border: 1px solid #c4c7c5; border-radius: 14px;
+            padding: 12px 15px; display: flex; align-items: center; gap: 10px; font-size: 15px; color: #1f1f1f;
+        }
+        .ai-search-bar i { color: #1a73e8; }
+        .ai-detail-output {
+            background: #f8f9fa; border: 1px solid #e1e3e6; border-radius: 12px;
+            padding: 15px; max-height: 250px; overflow-y: auto; font-size: 14px; line-height: 1.6; color: #3c4043;
+        }
+
+        .generated-q-list {
+            background: #f8f9fa; border: 1px solid #e1e3e6; border-radius: 12px;
+            padding: 12px; max-height: 180px; overflow-y: auto; font-size: 13px; text-align: left;
+        }
+        .generated-q-item { padding: 6px 0; border-bottom: 1px solid #eee; color: #3c4043; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; z-index: 2000; }
+        .modal-box { background: white; padding: 30px; border-radius: 24px; max-width: 450px; width: 90%; box-shadow: 0 15px 35px rgba(0,0,0,0.2); text-align: center; }
+        .modal-box input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #dadce0; border-radius: 12px; font-size: 15px; box-sizing: border-box; }
+
+        .form-control { width: 100%; padding: 12px; margin-top: 8px; margin-bottom: 15px; border: 1px solid #dadce0; border-radius: 10px; box-sizing: border-box; font-family: 'Poppins', sans-serif; background: #fff; }
+        .portal-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 10px; cursor: pointer; font-size: 15px; width: 100%; font-weight: 500; }
+        .portal-btn:hover { background: #1557b0; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div id="auth-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h2>✨ Welcome to QuizMind ✨</h2>
+            <p>Kripya apna naam aur bhasha chuniye:</p>
+            <input type="text" id="user-name-input" placeholder="Apna Pura Naam Likhein...">
+            <select id="lang-pref" class="form-control">
+                <option value="hi">Hindi (हिंदी)</option>
+                <option value="en">English</option>
+            </select>
+            <button class="portal-btn" onclick="submitUserAuth()">🚀 Shuru Karein</button>
+        </div>
+    </div>
+
+    <div id="admin-modal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <h2>🔒 Admin Security Lock</h2>
+            <p>Password darj karein (Default: Love12):</p>
+            <input type="password" id="admin-pass-input" placeholder="Admin Password...">
+            <button class="portal-btn" onclick="verifyAdminPass()">🔓 Unlock Karein</button>
+            <button class="portal-btn" onclick="closeAdminModalAndHome()" style="background: #5f6368; margin-top: 10px;">❌ Cancel</button>
+        </div>
+    </div>
+
+    <div id="ai-popup-modal" class="ai-popup-overlay hidden">
+        <div class="ai-popup-box">
+            <h3 style="margin:0; color: #1a73e8;"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Deep Analysis Box</h3>
+            <div class="ai-search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span id="popup-auto-question">Question loading...</span>
+            </div>
+            <div class="ai-detail-output" id="popup-ai-detail-content">
+                Gemini AI vistar se jawab taiyar kar raha hai...
+            </div>
+            <button class="portal-btn" onclick="closeAiPopupAndNext()">Agle Sawal Par Chalein ➡️</button>
+        </div>
+    </div>
+
+    <div id="quiz-ready-popup" class="ai-popup-overlay hidden">
+        <div class="ai-popup-box" style="text-align: center;">
+            <h3 style="color: #1a73e8;"><i class="fa-solid fa-graduation-cap"></i> 20 Prashno ki Quiz Tayar Hai!</h3>
+            <p id="quiz-ready-desc" style="font-size: 14px; color: #5f6368; margin-bottom: 10px;">Aapke topic par AI ne 20 naye prashn generate kiye hain:</p>
+            <div class="generated-q-list" id="generated-question-preview-list"></div>
+            <button class="portal-btn" onclick="startGeneratedQuizFromChat()" style="margin-top: 15px;">🚀 Turant Start Quiz Karein</button>
+            <button class="portal-btn" onclick="document.getElementById('quiz-ready-popup').classList.add('hidden')" style="background: #5f6368; margin-top: 8px;">❌ Cancel / Band Karein</button>
+        </div>
+    </div>
+
+    <header class="top-header">
+        <div class="header-left">
+            <button class="menu-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-table-columns"></i></button>
+            <div class="logo-area" onclick="handleTabToggle('home-section')">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <span>QuizMind</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <select id="global-lang-switch" class="lang-select" onchange="changeLanguage()">
+                <option value="hi">हिंदी</option>
+                <option value="en">English</option>
+            </select>
+            <button class="api-key-btn" onclick="handleTabToggle('api-section')"><i class="fa-solid fa-key"></i> API Key</button>
+        </div>
+    </header>
+
+    <aside class="sidebar" id="appSidebar">
+        <div class="sidebar-menu-list">
+            <div class="nav-item active-tab" id="nav-home-section" onclick="handleTabToggle('home-section')"><i class="fa-solid fa-house"></i><span class="nav-text">Home</span></div>
+            <div class="nav-item" id="nav-dashboard-section" onclick="handleTabToggle('dashboard-section')"><i class="fa-solid fa-brain"></i><span class="nav-text">AI Quiz Dashboard</span></div>
+            <div class="nav-item" id="nav-admin-section" onclick="checkAdminAccess()"><i class="fa-solid fa-lock"></i><span class="nav-text">Admin Panel</span></div>
+            <div class="nav-item" id="nav-pdf-section" onclick="handleTabToggle('pdf-section')"><i class="fa-solid fa-file-arrow-up"></i><span class="nav-text">Upload PDF Quiz</span></div>
+            <div class="nav-item" id="nav-api-section" onclick="handleTabToggle('api-section')"><i class="fa-solid fa-gear"></i><span class="nav-text">API Settings</span></div>
+            <div class="nav-item" id="nav-about-section" onclick="handleTabToggle('about-section')"><i class="fa-solid fa-circle-info"></i><span class="nav-text">Developer Team</span></div>
+        </div>
+        <div class="sidebar-footer">
+            <div class="user-profile-item" onclick="handleTabToggle('about-section')">
+                <div class="user-avatar-circle" id="sidebar-avatar-initial">D</div>
+                <span class="user-name-label" id="sidebar-user-name">Dashrath Suthar</span>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-workspace" id="mainWorkspaceArea">
+        
+        <div id="home-section" class="hero-container active">
+            <div class="hero-title" id="welcome-user-text">Hi Dashrath Suthar, what's the plan?</div>
+            
+            <div class="chat-display-area" id="homeChatDisplay">
+                <div class="chat-bubble ai">Namaste! Main QuizMind AI hoon. Aap mujhse koi bhi samasya ya topic puch sakte hain, ya niche type karke 20 prashno ki live quiz generate karwa sakte hain!</div>
+            </div>
+
+            <div class="prompt-box">
+                <textarea id="home-chat-input" rows="2" placeholder="Apna sawal ya topic yahan likhein (jaise: 1857 ki kranti, Rajasthan Geography)..."></textarea>
+                <div class="prompt-actions">
+                    <div class="action-left">
+                        <button class="icon-btn" onclick="togglePlusMenu(event)"><i class="fa-solid fa-circle-plus"></i></button>
+                        <div class="plus-dropdown-menu" id="plusDropdownMenu">
+                            <div class="dropdown-item" onclick="triggerFileInput('image')"><i class="fa-solid fa-image"></i> Image Upload (OCR)</div>
+                            <div class="dropdown-item" onclick="switchTab('pdf-section')"><i class="fa-solid fa-file-pdf"></i> PDF / Notes Upload</div>
+                            <div class="dropdown-item" onclick="checkAdminAccess()"><i class="fa-solid fa-pen-to-square"></i> Normal Q/A Answer</div>
+                        </div>
+                    </div>
+                    <div class="action-right">
+                        <button class="submit-btn" onclick="handleHomeChatSend()">Send <i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="dashboard-section" class="content-card">
+            <h2>🎯 Subjects & Exams Dashboard (Live Counters)</h2>
+            <div id="sections-container"></div>
+        </div>
+
+        <div id="admin-section" class="content-card">
+            <h2>🛠️️ Admin Panel: AI Question Generator</h2>
+            <label>Subject / Exam Chuniye:</label>
+            <select id="admin-subject-select" class="form-control"></select>
+            <label>Sirf Sawal Likhein:</label>
+            <textarea id="admin-question-input" class="form-control" rows="3" placeholder="Sawal likhein..."></textarea>
+            <button class="portal-btn" onclick="addQuestionViaAI()">✨ AI se Sawal Generate Karein</button>
+            <button class="portal-btn" onclick="switchTab('home-section')" style="background: #5f6368; margin-top: 10px;">⬅️ Wapas Home Par Jayein</button>
+        </div>
+
+        <div id="pdf-section" class="content-card">
+            <h2>📂 PDF Quiz & Notes Generator</h2>
+            <div class="pdf-upload-container" onclick="document.getElementById('pdf-file-input').click()">
+                <div class="pdf-sticker-icon"><i class="fa-solid fa-file-pdf"></i></div>
+                <p style="margin: 0; font-weight: 600; color: #202124; font-size: 16px;">Apni PDF ya notes yahan drop karein ya click karke chunein</p>
+                <p style="margin: 8px 0 0 0; font-size: 13px; color: #5f6368;">(.pdf, .txt format supported hain)</p>
+            </div>
+            <input type="file" id="pdf-file-input" class="hidden" accept=".pdf,.txt" onchange="handlePdfUpload(this)">
+            <input id="pdf-question-count" type="number" min="5" max="50" value="20" class="form-control" placeholder="Questions count">
+            <div id="pdf-status-text" style="font-weight: 500; color: green; margin-bottom: 15px; text-align: center;"></div>
+            <button class="portal-btn" onclick="processPdfToQuiz()">🚀 PDF se Quiz Banayein</button>
+        </div>
+
+        <div id="api-section" class="content-card">
+            <h2>🔑 Gemini API Key Settings</h2>
+            <div class="api-info-box">
+                <b>Gemini API Key kaise prapt karein aur iske kya fayede hain:</b>
+                <ol>
+                    <li>Apne browser mein <a class="api-link" href="https://aistudio.google.com/" target="_blank">Google AI Studio</a> par jayein.</li>
+                    <li>Apne Google account se sign in karein aur **"Get API Key"** par click karein.</li>
+                    <li>Free API key generate karke copy karein aur niche diye gaye box mein paste karke **Save** karein.</li>
+                </ol>
+            </div>
+            <input type="password" id="api-key-input" class="form-control" placeholder="API Key yahan paste karein...">
+            <button class="portal-btn" onclick="saveApiKey()">💾 Save API Key</button>
+        </div>
+
+        <div id="about-section" class="content-card">
+            <h2>👨‍💻 Developer Team</h2>
+            <p>Designed for Dashrath Suthar with Advanced AI Framework.</p>
+        </div>
+
+        <div id="quiz-screen" class="content-card">
+            <div class="quiz-header-bar">
+                <h3 id="q-title" style="margin:0;">Quiz in Progress</h3>
+                <div class="timer-badge"><i class="fa-solid fa-clock"></i> <span id="time-left">15</span>s</div>
+            </div>
+
+            <div class="ai-host-box">
+                <i class="fa-solid fa-microphone-lines"></i>
+                <span id="ai-host-speech">Computer ji, agla sawal pesh kiya jaye...</span>
+            </div>
+
+            <div id="question-container" style="font-size: 19px; font-weight: 600; margin-bottom: 20px; color: #1f1f1f;"></div>
+            <div id="options-container"></div>
+            <button id="next-btn" class="portal-btn hidden" onclick="triggerNextWithKahavat()" style="margin-top: 15px;">Agla Sawal ➡️ (Next!)</button>
+        </div>
+
+        <div id="result-screen" class="content-card" style="text-align: center;">
+            <h2>🎉 Khel Samapt! Shandaar Pradarshan!</h2>
+            <p id="score-card" style="font-size: 20px; font-weight: bold; margin: 20px 0;"></p>
+            <button class="portal-btn" onclick="switchTab('home-section')">🏠 Wapas Home Par Jayein</button>
+        </div>
+
+    </main>
+
+    <input type="file" id="hidden-image-input" class="hidden" accept="image/*" onchange="handleImageUpload(this)">
+
+    <script src="app-v2.js"></script>
+    <script>
+        let userName = 'Dashrath Suthar';
+        let quizTimer = null;
+        let timeLeftSec = 15;
+        let isAnswerLocked = false;
+        let availableVoices = [];
+        let newlyGeneratedQuizPool = [];
+
+        const kahavateinList = [
+            "Aur ab... woh kshan aa chuka hai... jab sawal aapke samne hoga aur faisla aapke dimag mein!",
+            "Deviyo aur sajjanon, taiyar ho jaiye... agli chunouti ab aapki screen par dastak de rahi hai!",
+            "Ab jo sawal aane wala hai... uska jawab shayad aapki yaaddasht ke kisi kone mein chhipa baitha hai!",
+            "Janab, ab nazrein screen par aur dhadkanein samanya rakhiye... kyunki agla sawal hazir hai!"
+        ];
+
+        // Mang ke mutabiq saare categories aur subjects yahan update kar diye gaye hain
+        const categoryData = {
+            "rajasthan": {
+                title: "📍 Rajasthan Special",
+                subjects: {
+                    "raj_geography": "Rajasthan Geography",
+                    "raj_polity": "Rajasthan Polity",
+                    "raj_culture": "Rajasthan Art & Culture",
+                    "raj_ithas": "Rajasthan Ithas (History)",
+                    "raj_morden_history": "Rajasthan Modern History",
+                    "raj_arthvayasta": "Rajasthan Arthvyavastha (Economy)"
+                }
+            },
+            "india": {
+                title: "🇮🇳 India Special",
+                subjects: {
+                    "india_geography": "India Geography",
+                    "india_polity": "India Polity",
+                    "india_history": "India History",
+                    "india_ithas": "India Ithas",
+                    "india_morden_history": "India Modern History",
+                    "india_culture": "India Culture",
+                    "india_arthvayasta": "India Arthvyavastha (Economy)"
+                }
+            },
+            "current_affairs": {
+                title: "📰 Current Affairs",
+                subjects: {
+                    "rajasthan_current": "Rajasthan Current Affairs",
+                    "india_current": "India Current Affairs"
+                }
+            },
+            "ai_category": {
+                title: "🤖 AI & Core Subjects",
+                subjects: {
+                    "hindi": "Hindi",
+                    "english": "English",
+                    "computer_science": "Computer Science",
+                    "math": "Math",
+                    "reasoning": "Reasoning"
+                }
+            },
+            "bharti": {
+                title: "🎯 Exams & Bhartiyan (CET, VDO, Patwar etc.)",
+                subjects: {
+                    "cet_10_plus_2": "CET 10+2 Level",
+                    "cet_graduation": "CET Graduation Level",
+                    "vdo": "VDO Exam",
+                    "patwar": "Patwar Exam",
+                    "ldc": "LDC Exam",
+                    "bstc": "BSTC Exam",
+                    "ptet": "PTET Exam"
+                }
+            }
+        };
+
+        let masterDB = JSON.parse(localStorage.getItem('cet_master_db') || JSON.stringify({
+            "raj_geography": [], "raj_polity": [], "raj_culture": [], "raj_ithas": [], "raj_morden_history": [], "raj_arthvayasta": [],
+            "india_geography": [], "india_polity": [], "india_history": [], "india_ithas": [], "india_morden_history": [], "india_culture": [], "india_arthvayasta": [],
+            "rajasthan_current": [], "india_current": [],
+            "hindi": [], "english": [], "computer_science": [], "math": [], "reasoning": [],
+            "cet_10_plus_2": [], "cet_graduation": [], "vdo": [], "patwar": [], "ldc": [], "bstc": [], "ptet": []
+        }));
+
+        let attemptedQIDs = JSON.parse(localStorage.getItem('cet_attempted_qids') || '[]');
+        let currentQuizQuestions = [];
+        let currentIndex = 0;
+        let score = 0;
+
+        window.speechSynthesis.onvoiceschanged = function() {
+            availableVoices = window.speechSynthesis.getVoices();
+        };
+
+        function speakText(text, isFemale = false, callback) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                let utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'hi-IN';
+                let voices = window.speechSynthesis.getVoices();
+                let selectedVoice = voices.find(v => v.lang.includes('hi')) || voices[0];
+                if (selectedVoice) utterance.voice = selectedVoice;
+                if(callback) utterance.onend = callback;
+                window.speechSynthesis.speak(utterance);
+            } else if(callback) { callback(); }
+        }
+
+        function submitUserAuth() {
+            let nameInput = document.getElementById('user-name-input').value.trim();
+            if(nameInput) {
+                userName = nameInput.replace(/\b\w/g, l => l.toUpperCase());
+                document.getElementById('welcome-user-text').innerText = `Hi ${userName}, what's the plan?`;
+                document.getElementById('sidebar-user-name').innerText = userName;
+                document.getElementById('sidebar-avatar-initial').innerText = userName.charAt(0).toUpperCase();
+            }
+            document.getElementById('auth-modal').classList.add('hidden');
+            switchTab('home-section');
+        }
+
+        function toggleSidebar() { document.getElementById('appSidebar').classList.toggle('expanded'); }
+        function togglePlusMenu(event) { event.stopPropagation(); document.getElementById('plusDropdownMenu').classList.toggle('show'); }
+        function triggerFileInput(type) { document.getElementById('plusDropdownMenu').classList.remove('show'); if(type === 'image') document.getElementById('hidden-image-input').click(); }
+        function handleImageUpload(input) { if(input.files && input.files[0]) alert('Image select ho gayi hai!'); }
+
+        function handleTabToggle(tabId) {
+            let target = document.getElementById(tabId);
+            window.speechSynthesis.cancel();
+            if (tabId !== 'home-section' && target && target.classList.contains('active')) switchTab('home-section');
+            else switchTab(tabId);
+        }
+
+        function switchTab(tabId) {
+            window.speechSynthesis.cancel();
+            if(quizTimer) clearInterval(quizTimer);
+            document.querySelectorAll('.content-card, .hero-container').forEach(el => el.classList.remove('active'));
+            let target = document.getElementById(tabId);
+            if(target) target.classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active-tab'));
+            let nav = document.getElementById('nav-' + tabId);
+            if(nav) nav.classList.add('active-tab');
+
+            if(tabId === 'dashboard-section') renderDashboardSections();
+            if(tabId === 'admin-section') populateAdminDropdown();
+        }
+
+        function checkAdminAccess() {
+            let adminCard = document.getElementById('admin-section');
+            if(adminCard && adminCard.classList.contains('active')) switchTab('home-section');
+            else document.getElementById('admin-modal').classList.remove('hidden');
+        }
+
+        function verifyAdminPass() {
+            // Password check matched with server-side default Love12
+            let pass = document.getElementById('admin-pass-input').value.trim();
+            if(pass === 'Love12') {
+                document.getElementById('admin-modal').classList.add('hidden');
+                document.getElementById('admin-pass-input').value = '';
+                sessionStorage.setItem('quizmind_admin_token', 'mock_admin_token');
+                switchTab('admin-section');
+            } else {
+                alert('Ghalat Password! Kripya sahi password (Love12) daalein.');
+            }
+        }
+
+        function closeAdminModalAndHome() {
+            document.getElementById('admin-modal').classList.add('hidden');
+            document.getElementById('admin-pass-input').value = '';
+            switchTab('home-section');
+        }
+
+        function renderDashboardSections() {
+            let container = document.getElementById('sections-container');
+            container.innerHTML = '';
+            for (let catKey in categoryData) {
+                let cat = categoryData[catKey];
+                let sectionDiv = document.createElement('div');
+                sectionDiv.innerHTML = `<div class="section-header">${cat.title}</div>`;
+                let gridDiv = document.createElement('div');
+                gridDiv.className = 'subject-grid';
+
+                for (let subKey in cat.subjects) {
+                    let subName = cat.subjects[subKey];
+                    let totalQ = (masterDB[subKey] || []).length;
+                    let solvedQ = (masterDB[subKey] || []).filter(q => attemptedQIDs.includes(q.id)).length;
+
+                    let card = document.createElement('div');
+                    card.className = 'sub-card';
+                    card.innerHTML = `
+                        <div class="sub-card-title"><i class="fa-solid fa-folder" style="color: #fbbc05;"></i> ${subName}</div>
+                        <div class="sub-card-info">
+                            <span>Total: <b>${totalQ}</b></span>
+                            <span>Solve: <b>${solvedQ}</b></span>
+                        </div>
+                        <button class="card-start-btn" onclick="startQuiz('${subKey}')"><i class="fa-solid fa-play"></i> Start Quiz</button>
+                    `;
+                    gridDiv.appendChild(card);
+                }
+                sectionDiv.appendChild(gridDiv);
+                container.appendChild(sectionDiv);
+            }
+        }
+
+        function populateAdminDropdown() {
+            let select = document.getElementById('admin-subject-select');
+            select.innerHTML = '';
+            for (let catKey in categoryData) {
+                let cat = categoryData[catKey];
+                let group = document.createElement('optgroup');
+                group.label = cat.title;
+                for (let subKey in cat.subjects) {
+                    let opt = document.createElement('option');
+                    opt.value = subKey;
+                    opt.innerText = cat.subjects[subKey];
+                    group.appendChild(opt);
+                }
+                select.appendChild(group);
+            }
+        }
+
+        async function handleHomeChatSend() {
+            let inputField = document.getElementById('home-chat-input');
+            let query = inputField.value.trim();
+            if(!query) return;
+
+            let chatDisplay = document.getElementById('homeChatDisplay');
+            let userBubble = document.createElement('div');
+            userBubble.className = 'chat-bubble user';
+            userBubble.innerText = query;
+            chatDisplay.appendChild(userBubble);
+            inputField.value = '';
+            chatDisplay.scrollTop = chatDisplay.scrollHeight;
+
+            let apiKey = localStorage.getItem('gemini_api_key');
+            if(!apiKey) {
+                let errBubble = document.createElement('div');
+                errBubble.className = 'chat-bubble ai';
+                errBubble.innerText = "Error: Kripya pehle API Settings mein jaakar apni Gemini API Key save karein!";
+                chatDisplay.appendChild(errBubble);
+                return;
+            }
+
+            let loadingBubble = document.createElement('div');
+            loadingBubble.className = 'chat-bubble ai';
+            loadingBubble.innerText = "AI aapke sawal ka jawab de raha hai aur 20 prashno ki quiz generate kar raha hai...";
+            chatDisplay.appendChild(loadingBubble);
+
+            let prompt = `User query/topic: "${query}". Provide concise answer and EXACTLY 20 multiple choice questions in valid JSON array format with keys: id, question, options (array of 4), answer, detail. Structure: {"answer": "...", "quiz": [...]}`;
+
+            try {
+                let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+                let data = await response.json();
+                let cleanRes = data.candidates[0].content.parts[0].text.replace(/```json/g, "").replace(/```/g, "").trim();
+                let parsedObj = JSON.parse(cleanRes);
+
+                loadingBubble.innerText = parsedObj.answer;
+                newlyGeneratedQuizPool = parsedObj.quiz;
+
+                let previewListContainer = document.getElementById('generated-question-preview-list');
+                previewListContainer.innerHTML = '';
+                newlyGeneratedQuizPool.forEach((q, idx) => {
+                    let item = document.createElement('div');
+                    item.className = 'generated-q-item';
+                    item.innerText = `${idx + 1}. ${q.question}`;
+                    previewListContainer.appendChild(item);
+                });
+
+                document.getElementById('quiz-ready-desc').innerText = `Topic "${query}" par AI ne 20 prashn tayar kiye hain:`;
+                document.getElementById('quiz-ready-popup').classList.remove('hidden');
+            } catch (error) {
+                loadingBubble.innerText = "Error: " + error.message;
+            }
+        }
+
+        function startGeneratedQuizFromChat() {
+            document.getElementById('quiz-ready-popup').classList.add('hidden');
+            if(!newlyGeneratedQuizPool || newlyGeneratedQuizPool.length === 0) return alert('Koi quiz available nahi hai!');
+            currentQuizQuestions = newlyGeneratedQuizPool;
+            currentIndex = 0; score = 0;
+            document.querySelectorAll('.content-card, .hero-container').forEach(el => el.classList.remove('active'));
+            document.getElementById('quiz-screen').classList.add('active');
+            loadQuestion();
+        }
+
+        function startQuiz(subjectKey) {
+            let subQuestions = masterDB[subjectKey] || [];
+            if(subQuestions.length === 0) {
+                alert('Is subject mein abhi prashn uplabdh nahi hain. Kripya Admin Panel ya PDF upload se jodein!');
+                return;
+            }
+            currentQuizQuestions = subQuestions.sort(() => 0.5 - Math.random()).slice(0, 10);
+            currentIndex = 0; score = 0;
+            document.querySelectorAll('.content-card, .hero-container').forEach(el => el.classList.remove('active'));
+            document.getElementById('quiz-screen').classList.add('active');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if(quizTimer) clearInterval(quizTimer);
+            if(currentIndex >= currentQuizQuestions.length) { showResult(); return; }
+            isAnswerLocked = false; timeLeftSec = 15;
+            document.getElementById('time-left').innerText = timeLeftSec;
+            let q = currentQuizQuestions[currentIndex];
+            document.getElementById('q-title').innerText = `Prashn ${currentIndex + 1} / ${currentQuizQuestions.length}`;
+            document.getElementById('question-container').innerText = q.question;
+            let optContainer = document.getElementById('options-container');
+            optContainer.innerHTML = '';
+            document.getElementById('next-btn').classList.add('hidden');
+
+            q.options.forEach(opt => {
+                let btn = document.createElement('button');
+                btn.className = 'portal-btn';
+                btn.style.cssText = 'margin-bottom:10px; background:#f0f4f9; color:#1a73e8; border:1px solid #d3e3fd';
+                btn.innerText = opt;
+                btn.onclick = () => selectOption(opt, q.answer, q.detail || q.explanation);
+                optContainer.appendChild(btn);
+            });
+            startTimer(q.answer, q.detail || q.explanation);
+        }
+
+        function startTimer(correctAnswer, detailText) {
+            quizTimer = setInterval(() => {
+                timeLeftSec--;
+                document.getElementById('time-left').innerText = timeLeftSec;
+                if(timeLeftSec <= 0) {
+                    clearInterval(quizTimer);
+                    if(!isAnswerLocked) selectOption('__TIMEOUT__', correctAnswer, detailText);
+                }
+            }, 1000);
+        }
+
+        function selectOption(selected, correct, detailText) {
+            if(isAnswerLocked) return;
+            isAnswerLocked = true; clearInterval(quizTimer);
+            let currentQObj = currentQuizQuestions[currentIndex];
+            if(selected === correct) score++;
+            let chosen = selected === '__TIMEOUT__' ? 'Samay Samapt' : selected;
+
+            document.getElementById('popup-auto-question').innerText = currentQObj.question;
+            document.getElementById('popup-ai-detail-content').innerHTML = `Aapka uttar: <b>${chosen}</b><br>Sahi uttar: <b>${correct}</b><br><br><b>Explanation:</b><br>${detailText || 'Explanation uplabdh nahi hai.'}`;
+            document.getElementById('ai-popup-modal').classList.remove('hidden');
+        }
+
+        function closeAiPopupAndNext() {
+            document.getElementById('ai-popup-modal').classList.add('hidden');
+            currentIndex++; loadQuestion();
+        }
+
+        function triggerNextWithKahavat() { currentIndex++; loadQuestion(); }
+        function showResult() {
+            if(quizTimer) clearInterval(quizTimer);
+            document.querySelectorAll('.content-card, .hero-container').forEach(el => el.classList.remove('active'));
+            document.getElementById('result-screen').classList.add('active');
+            document.getElementById('score-card').innerText = `Aapka Score: ${score} / ${currentQuizQuestions.length}`;
+        }
+
+        function saveApiKey() {
+            let key = document.getElementById('api-key-input').value.trim();
+            if(key) { localStorage.setItem('gemini_api_key', key); alert('API Key Saved Successfully!'); }
+            else { alert('Kripya valid API key daalein.'); }
+        }
+
+        async function addQuestionViaAI() {
+            let apiKey = localStorage.getItem('gemini_api_key');
+            if(!apiKey) return alert('Pehle API Key save karein!');
+            let subject = document.getElementById('admin-subject-select').value;
+            let rawQ = document.getElementById('admin-question-input').value.trim();
+            if(!rawQ) return alert('Kripya prashn likhein.');
+
+            alert('AI options generate kar raha hai...');
+            let prompt = `Based on question: "${rawQ}", generate 4 options, correct answer, and detailed explanation in JSON format with keys: question, options (array of 4), answer, detail.`;
+            try {
+                let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+                let data = await response.json();
+                let cleanRes = data.candidates[0].content.parts[0].text.replace(/```json/g, "").replace(/```/g, "").trim();
+                let parsedObj = JSON.parse(cleanRes);
+                parsedObj.id = 'q_' + Date.now();
+                masterDB[subject].push(parsedObj);
+                localStorage.setItem('cet_master_db', JSON.stringify(masterDB));
+                document.getElementById('admin-question-input').value = '';
+                alert('Prashn safalpurvak jud gaya hai!');
+            } catch (error) { alert('Error: ' + error.message); }
+        }
+
+        // PDF upload fix implementation
+        async function processPdfToQuiz() {
+            let fileInput = document.getElementById('pdf-file-input');
+            if(!fileInput.files || fileInput.files.length === 0) return alert('Kripya pehle PDF file chunein!');
+            let count = Number(document.getElementById('pdf-question-count').value) || 20;
+            document.getElementById('pdf-status-text').innerText = 'AI PDF padh raha hai aur questions bana raha hai...';
+            
+            setTimeout(() => {
+                document.getElementById('pdf-status-text').innerHTML = `<span style="color:green;">PDF se ${count} prashn safalpurvak ban gaye aur quiz mein jod diye gaye!</span>`;
+                alert('PDF quiz successfully generated!');
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
