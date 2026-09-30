@@ -125,7 +125,7 @@
         .hero-title { font-size: 30px; font-weight: 600; background: linear-gradient(135deg, #1a73e8, #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; text-align: center; }
         
         .chat-display-area {
-            width: 100%; max-height: 300px; overflow-y: auto; background: #ffffff;
+            width: 100%; max-height: 280px; overflow-y: auto; background: #ffffff;
             border: 1px solid var(--border-color); border-radius: 16px; padding: 15px; margin-bottom: 15px;
             display: flex; flex-direction: column; gap: 10px; box-sizing: border-box;
         }
@@ -136,10 +136,10 @@
         .prompt-box { width: 100%; background: #f8f9fa; border: 1px solid #c4c7c5; border-radius: 28px; padding: 15px 20px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); text-align: left; position: relative; box-sizing: border-box; }
         .prompt-box textarea { width: 100%; border: none; background: transparent; resize: none; outline: none; font-size: 16px; font-family: 'Poppins', sans-serif; color: var(--text-color); }
         .prompt-actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 10px; }
-        .action-left, .action-right { display: flex; align-items: center; gap: 15px; position: relative; }
+        .action-left, .action-right { display: flex; align-items: center; gap: 10px; position: relative; }
         .icon-btn { background: none; border: none; cursor: pointer; font-size: 18px; color: #5f6368; padding: 6px; border-radius: 50%; }
         .icon-btn:hover { background: #e2e7ec; color: var(--primary); }
-        .submit-btn { background: var(--primary); color: white; border: none; padding: 8px 18px; border-radius: 20px; cursor: pointer; font-weight: 500; }
+        .submit-btn { background: var(--primary); color: white; border: none; padding: 8px 18px; border-radius: 20px; cursor: pointer; font-weight: 500; font-size: 13px; }
         .submit-btn:hover { background: #1557b0; }
 
         .plus-dropdown-menu {
@@ -386,11 +386,12 @@
 
     <main class="main-workspace" id="mainWorkspaceArea">
         
+        <!-- Home Section with Normal AI Chat & 20-Q Generator Option -->
         <div id="home-section" class="hero-container active">
             <div class="hero-title" id="welcome-user-text">Hi Dashrath Suthar, what's the plan?</div>
             
             <div class="chat-display-area" id="homeChatDisplay">
-                <div class="chat-bubble ai">Namaste! Main QuizMind AI hoon. Aap mujhse koi bhi samasya ya topic puch sakte hain, ya niche type karke 20 prashno ki live quiz generate karwa sakte hain!</div>
+                <div class="chat-bubble ai">Namaste! Main QuizMind AI hoon. Aap mujhse koi bhi sawal ya topic par baat kar sakte hain, ya niche button click karke 20 prashno ki live quiz generate karwa sakte hain!</div>
             </div>
 
             <div class="prompt-box">
@@ -401,11 +402,11 @@
                         <div class="plus-dropdown-menu" id="plusDropdownMenu">
                             <div class="dropdown-item" onclick="triggerFileInput('image')"><i class="fa-solid fa-image"></i> Image Upload (OCR)</div>
                             <div class="dropdown-item" onclick="switchTab('pdf-section')"><i class="fa-solid fa-file-pdf"></i> PDF / Notes Upload</div>
-                            <div class="dropdown-item" onclick="checkAdminAccess()"><i class="fa-solid fa-pen-to-square"></i> Normal Q/A Answer</div>
                         </div>
                     </div>
                     <div class="action-right">
-                        <button class="submit-btn" onclick="handleHomeChatSend()">Send <i class="fa-solid fa-paper-plane"></i></button>
+                        <button class="submit-btn" onclick="handleHomeChatSend('chat')" style="background:#5f6368;">Ask AI (Chat)</button>
+                        <button class="submit-btn" onclick="handleHomeChatSend('quiz')">Generate 20-Q Quiz <i class="fa-solid fa-paper-plane"></i></button>
                     </div>
                 </div>
             </div>
@@ -417,7 +418,7 @@
         </div>
 
         <div id="admin-section" class="content-card">
-            <h2>🛠️️ Admin Panel: AI Question Generator</h2>
+            <h2>🛠 Admin Panel: AI Question Generator</h2>
             <label>Subject / Exam Chuniye:</label>
             <select id="admin-subject-select" class="form-control"></select>
             <label>Sirf Sawal Likhein:</label>
@@ -500,7 +501,6 @@
             "Janab, ab nazrein screen par aur dhadkanein samanya rakhiye... kyunki agla sawal hazir hai!"
         ];
 
-        // Mang ke mutabiq saare categories aur subjects yahan update kar diye gaye hain
         const categoryData = {
             "rajasthan": {
                 title: "📍 Rajasthan Special",
@@ -631,7 +631,6 @@
         }
 
         function verifyAdminPass() {
-            // Password check matched with server-side default Love12
             let pass = document.getElementById('admin-pass-input').value.trim();
             if(pass === 'Love12') {
                 document.getElementById('admin-modal').classList.add('hidden');
@@ -698,7 +697,8 @@
             }
         }
 
-        async function handleHomeChatSend() {
+        // Updated Home Chat Handler supporting both Normal Chat and 20-Q Quiz generation
+        async function handleHomeChatSend(mode = 'chat') {
             let inputField = document.getElementById('home-chat-input');
             let query = inputField.value.trim();
             if(!query) return;
@@ -722,35 +722,46 @@
 
             let loadingBubble = document.createElement('div');
             loadingBubble.className = 'chat-bubble ai';
-            loadingBubble.innerText = "AI aapke sawal ka jawab de raha hai aur 20 prashno ki quiz generate kar raha hai...";
+            loadingBubble.innerText = mode === 'quiz' ? "AI 20 prashno ki quiz taiyar kar raha hai..." : "AI jawab taiyar kar raha hai...";
             chatDisplay.appendChild(loadingBubble);
-
-            let prompt = `User query/topic: "${query}". Provide concise answer and EXACTLY 20 multiple choice questions in valid JSON array format with keys: id, question, options (array of 4), answer, detail. Structure: {"answer": "...", "quiz": [...]}`;
+            chatDisplay.scrollTop = chatDisplay.scrollHeight;
 
             try {
-                let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                });
-                let data = await response.json();
-                let cleanRes = data.candidates[0].content.parts[0].text.replace(/```json/g, "").replace(/```/g, "").trim();
-                let parsedObj = JSON.parse(cleanRes);
+                if (mode === 'quiz') {
+                    let prompt = `Topic: "${query}". Generate EXACTLY 20 multiple choice questions in valid JSON format with keys: questions (array of objects containing question, options [4 items], answer, detail). Only give valid JSON.`;
+                    let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    });
+                    let data = await response.json();
+                    let textRes = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                    let cleanRes = textRes.replace(/```json/g, "").replace(/```/g, "").trim();
+                    let parsedObj = JSON.parse(cleanRes);
+                    newlyGeneratedQuizPool = parsedObj.questions || parsedObj;
 
-                loadingBubble.innerText = parsedObj.answer;
-                newlyGeneratedQuizPool = parsedObj.quiz;
-
-                let previewListContainer = document.getElementById('generated-question-preview-list');
-                previewListContainer.innerHTML = '';
-                newlyGeneratedQuizPool.forEach((q, idx) => {
-                    let item = document.createElement('div');
-                    item.className = 'generated-q-item';
-                    item.innerText = `${idx + 1}. ${q.question}`;
-                    previewListContainer.appendChild(item);
-                });
-
-                document.getElementById('quiz-ready-desc').innerText = `Topic "${query}" par AI ne 20 prashn tayar kiye hain:`;
-                document.getElementById('quiz-ready-popup').classList.remove('hidden');
+                    loadingBubble.innerText = `Topic "${query}" par ${newlyGeneratedQuizPool.length} prashn taiyar hain!`;
+                    
+                    let previewListContainer = document.getElementById('generated-question-preview-list');
+                    previewListContainer.innerHTML = '';
+                    newlyGeneratedQuizPool.forEach((q, idx) => {
+                        let item = document.createElement('div');
+                        item.className = 'generated-q-item';
+                        item.innerText = `${idx + 1}. ${q.question}`;
+                        previewListContainer.appendChild(item);
+                    });
+                    document.getElementById('quiz-ready-desc').innerText = `Topic "${query}" par AI ne prashn generate kiye hain:`;
+                    document.getElementById('quiz-ready-popup').classList.remove('hidden');
+                } else {
+                    let prompt = `User query: "${query}". Give a clear, helpful and factual answer in Hindi.`;
+                    let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    });
+                    let data = await response.json();
+                    let ansText = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Jawab uplabdh nahi ho saka.';
+                    loadingBubble.innerText = ansText;
+                }
+                chatDisplay.scrollTop = chatDisplay.scrollHeight;
             } catch (error) {
                 loadingBubble.innerText = "Error: " + error.message;
             }
@@ -844,6 +855,7 @@
             else { alert('Kripya valid API key daalein.'); }
         }
 
+        // Safe Admin AI Question Generation with robust fallback to prevent 'undefined (reading 0)' error
         async function addQuestionViaAI() {
             let apiKey = localStorage.getItem('gemini_api_key');
             if(!apiKey) return alert('Pehle API Key save karein!');
@@ -852,15 +864,23 @@
             if(!rawQ) return alert('Kripya prashn likhein.');
 
             alert('AI options generate kar raha hai...');
-            let prompt = `Based on question: "${rawQ}", generate 4 options, correct answer, and detailed explanation in JSON format with keys: question, options (array of 4), answer, detail.`;
+            let prompt = `Based on question: "${rawQ}", generate 4 options, correct answer, and detailed explanation in JSON format with keys: question, options (array of 4), answer, detail. Only return valid JSON.`;
             try {
                 let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                 });
                 let data = await response.json();
-                let cleanRes = data.candidates[0].content.parts[0].text.replace(/```json/g, "").replace(/```/g, "").trim();
+                
+                // Safe checks to avoid undefined properties error
+                if (!data || !data.candidates || data.candidates.length === 0 || !data.candidates[0].content) {
+                    throw new Error('AI se valid response nahi mila. Dobara koshish karein.');
+                }
+                
+                let textRes = data.candidates[0].content.parts[0].text;
+                let cleanRes = textRes.replace(/```json/g, "").replace(/```/g, "").trim();
                 let parsedObj = JSON.parse(cleanRes);
+                
                 parsedObj.id = 'q_' + Date.now();
                 masterDB[subject].push(parsedObj);
                 localStorage.setItem('cet_master_db', JSON.stringify(masterDB));
@@ -869,7 +889,6 @@
             } catch (error) { alert('Error: ' + error.message); }
         }
 
-        // PDF upload fix implementation
         async function processPdfToQuiz() {
             let fileInput = document.getElementById('pdf-file-input');
             if(!fileInput.files || fileInput.files.length === 0) return alert('Kripya pehle PDF file chunein!');
