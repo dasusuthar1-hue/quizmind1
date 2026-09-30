@@ -25,7 +25,7 @@ async function api(req,res,url){
   if(req.method==='GET'&&url.pathname==='/api/health')return json(res,200,{ok:true});
   if(req.method==='POST'&&url.pathname==='/api/admin/login'){
     let b;try{b=await body(req);}catch{return json(res,400,{error:'Invalid JSON'});}
-    if(String(b.password||'')!==ADMIN_PASSWORD)return json(res,401,{error:'गलत Admin Password.'});
+    if(String(b.password||'')!==ADMIN_PASSWORD)return json(res,401,{error:'Galat Admin Password.'});
     const token=crypto.randomBytes(32).toString('hex');sessions.set(token,Date.now());return json(res,200,{token});
   }
   if(req.method==='GET'&&url.pathname==='/api/questions'){
@@ -33,24 +33,24 @@ async function api(req,res,url){
   }
   if(req.method==='POST'&&url.pathname==='/api/questions/submit'){
     let b;try{b=await body(req);}catch{return json(res,400,{error:'Invalid JSON'});}
-    const q=normalize(b.question,b.subject);if(!q)return json(res,400,{error:'Question format गलत है।'});q.source='student-pending';const d=readDb();d.pending.push(q);writeDb(d);return json(res,200,{ok:true,message:'Question Admin approval के लिए भेज दिया गया है।'});
+    const q=normalize(b.question,b.subject);if(!q)return json(res,400,{error:'Question format galat hai.'});q.source='student-pending';const d=readDb();d.pending.push(q);writeDb(d);return json(res,200,{ok:true,message:'Question Admin approval ke liye bhej diya gaya hai.'});
   }
   if(req.method==='GET'&&url.pathname==='/api/questions/pending'){
     if(!admin(req))return json(res,401,{error:'Admin authorization required.'});return json(res,200,{pending:readDb().pending});
   }
   if(req.method==='POST'&&url.pathname==='/api/questions/bulk'){
     if(!admin(req))return json(res,401,{error:'Admin authorization required.'});let b;try{b=await body(req);}catch{return json(res,400,{error:'Invalid JSON'});}
-    const subject=String(b.subject||'').trim(), incoming=Array.isArray(b.questions)?b.questions:[];if(!subject||!incoming.length)return json(res,400,{error:'Subject और questions जरूरी हैं।'});
+    const subject=String(b.subject||'').trim(), incoming=Array.isArray(b.questions)?b.questions:[];if(!subject||!incoming.length)return json(res,400,{error:'Subject aur questions zaroori hain.'});
     const d=readDb(),existing=new Set(d.questions.map(q=>`${q.subject}|${q.question.toLowerCase().trim()}`));let added=0,skipped=0,invalid=0;
     for(const raw of incoming){const q=normalize(raw,subject);if(!q){invalid++;continue;}const key=`${subject}|${q.question.toLowerCase()}`;if(existing.has(key)){skipped++;continue;}d.questions.push(q);existing.add(key);added++;}writeDb(d);return json(res,200,{added,skipped,invalid,total:d.questions.length});
   }
   if(req.method==='POST'&&(url.pathname==='/api/questions/approve'||url.pathname==='/api/questions/reject')){
     if(!admin(req))return json(res,401,{error:'Admin authorization required.'});let b;try{b=await body(req);}catch{return json(res,400,{error:'Invalid JSON'});}
-    const d=readDb(),id=String(b.id||''),idx=d.pending.findIndex(q=>q.id===id);if(idx<0)return json(res,404,{error:'Pending question नहीं मिला।'});const q=d.pending.splice(idx,1)[0];
+    const d=readDb(),id=String(b.id||''),idx=d.pending.findIndex(q=>q.id===id);if(idx<0)return json(res,404,{error:'Pending question nahi mila.'});const q=d.pending.splice(idx,1)[0];
     if(url.pathname.endsWith('/approve')){const dup=d.questions.some(x=>x.subject===q.subject&&x.question.toLowerCase()===q.question.toLowerCase());if(!dup){q.source='student-approved';d.questions.push(q);}writeDb(d);return json(res,200,{ok:true,duplicate:dup});}
     writeDb(d);return json(res,200,{ok:true,removed:1});
   }
-  return json(res,404,{error:'API route नहीं मिला।'});
+  return json(res,404,{error:'API route nahi mila.'});
 }
 
 const server=http.createServer(async(req,res)=>{
