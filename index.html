@@ -16,123 +16,40 @@
             --card-bg: #ffffff;
             --border-color: #e1e3e6;
         }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--bg-color);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-            color: var(--text-color);
-        }
-
-        .top-header {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 60px;
-            background: var(--bg-color);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px; box-sizing: border-box; z-index: 1100;
-            border-bottom: 1px solid var(--border-color);
-        }
-
+        body { font-family: 'Poppins', sans-serif; background: var(--bg-color); margin: 0; padding: 0; display: flex; height: 100vh; overflow: hidden; color: var(--text-color); }
+        .top-header { position: fixed; top: 0; left: 0; width: 100%; height: 60px; background: var(--bg-color); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; box-sizing: border-box; z-index: 1100; border-bottom: 1px solid var(--border-color); }
         .header-left, .header-right { display: flex; align-items: center; gap: 15px; }
-        
-        .menu-toggle {
-            background: none; border: none; font-size: 18px; cursor: pointer;
-            color: #5f6368; padding: 10px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            transition: background 0.2s;
-        }
+        .menu-toggle { background: none; border: none; font-size: 18px; cursor: pointer; color: #5f6368; padding: 10px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         .menu-toggle:hover { background: #e2e7ec; color: #202124; }
-
         .logo-area { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 18px; color: #444746; cursor: pointer; }
         .logo-area i { color: var(--primary); font-size: 22px; }
-
-        .lang-select, .api-key-btn {
-            background: #c2e7ff; color: #001d35; border: none;
-            padding: 8px 14px; border-radius: 20px; font-weight: 500; cursor: pointer;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .sidebar {
-            width: 72px; height: calc(100vh - 60px);
-            background: var(--sidebar-bg); position: fixed; top: 60px; left: 0;
-            display: flex; flex-direction: column; justify-content: space-between;
-            padding: 15vh 0 15px 0; overflow-y: auto; z-index: 1000;
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
-            border-right: 1px solid var(--border-color);
-            box-sizing: border-box;
-        }
-
-        .sidebar:hover, .sidebar.expanded {
-            width: 260px; padding: 15px 12px; box-shadow: 6px 0 20px rgba(0,0,0,0.08);
-            background: #ffffff;
-        }
-
+        .lang-select, .api-key-btn { background: #c2e7ff; color: #001d35; border: none; padding: 8px 14px; border-radius: 20px; font-weight: 500; cursor: pointer; font-family: 'Poppins', sans-serif; }
+        .sidebar { width: 72px; height: calc(100vh - 60px); background: var(--sidebar-bg); position: fixed; top: 60px; left: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 15vh 0 15px 0; overflow-y: auto; z-index: 1000; transition: width 0.3s ease; border-right: 1px solid var(--border-color); box-sizing: border-box; }
+        .sidebar:hover, .sidebar.expanded { width: 260px; padding: 15px 12px; box-shadow: 6px 0 20px rgba(0,0,0,0.08); background: #ffffff; }
         .sidebar-menu-list { display: flex; flex-direction: column; gap: 4px; width: 100%; }
-
-        .nav-item {
-            position: relative; width: 48px; height: 48px;
-            background: transparent; border-radius: 24px;
-            margin: 2px auto; display: flex; align-items: center; justify-content: flex-start;
-            cursor: pointer; transition: all 0.2s ease; text-decoration: none; color: #444746;
-            box-sizing: border-box; padding-left: 14px;
-        }
-
-        .sidebar:hover .nav-item, .sidebar.expanded .nav-item {
-            width: 100%; border-radius: 24px; padding-left: 16px; gap: 16px; margin: 2px 0;
-        }
-
+        .nav-item { position: relative; width: 48px; height: 48px; background: transparent; border-radius: 24px; margin: 2px auto; display: flex; align-items: center; justify-content: flex-start; cursor: pointer; transition: all 0.2s ease; text-decoration: none; color: #444746; box-sizing: border-box; padding-left: 14px; }
+        .sidebar:hover .nav-item, .sidebar.expanded .nav-item { width: 100%; border-radius: 24px; padding-left: 16px; gap: 16px; margin: 2px 0; }
         .nav-item:hover { background: #e2e7ec; color: #1f1f1f; }
         .nav-item.active-tab { background: #d3e3fd; color: #0b57d0; font-weight: 600; }
         .nav-item.active-tab i { color: #0b57d0; }
-
         .nav-item i { font-size: 18px; min-width: 20px; text-align: center; color: #5f6368; }
         .nav-text { display: none; font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .sidebar:hover .nav-text, .sidebar.expanded .nav-text { display: inline-block; }
-
         .sidebar-footer { width: 100%; display: flex; flex-direction: column; gap: 5px; padding-top: 10px; border-top: 1px solid var(--border-color); }
         .user-profile-item { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 24px; cursor: pointer; text-decoration: none; color: #444746; transition: background 0.2s; width: 100%; box-sizing: border-box; }
         .user-profile-item:hover { background: #e2e7ec; }
         .user-avatar-circle { width: 32px; height: 32px; background: #1a73e8; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; min-width: 32px; }
-
-        .sidebar:not(:hover):not(.expanded) .user-profile-item .nav-text,
-        .sidebar:not(:hover):not(.expanded) .user-profile-item .user-name-label { display: none; }
-
-        .main-workspace {
-            margin-left: 72px; margin-top: 60px; width: calc(100% - 72px);
-            height: calc(100vh - 60px); display: flex; flex-direction: column;
-            align-items: center; justify-content: flex-start; padding: 20px; box-sizing: border-box;
-            overflow-y: auto; position: relative;
-        }
-
-        .content-card {
-            background: var(--card-bg); width: 100%; max-width: 950px;
-            padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            box-sizing: border-box; display: none; margin-top: 10px;
-            animation: fadeIn 0.3s ease;
-        }
+        .sidebar:not(:hover):not(.expanded) .user-profile-item .nav-text, .sidebar:not(:hover):not(.expanded) .user-profile-item .user-name-label { display: none; }
+        .main-workspace { margin-left: 72px; margin-top: 60px; width: calc(100% - 72px); height: calc(100vh - 60px); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 20px; box-sizing: border-box; overflow-y: auto; position: relative; }
+        .content-card { background: var(--card-bg); width: 100%; max-width: 950px; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); box-sizing: border-box; display: none; margin-top: 10px; }
         .content-card.active { display: block; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
         .hero-container { max-width: 900px; width: 100%; display: none; flex-direction: column; align-items: center; box-sizing: border-box; margin-top: 5vh; }
         .hero-container.active { display: flex; }
         .hero-title { font-size: 30px; font-weight: 600; background: linear-gradient(135deg, #1a73e8, #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; text-align: center; }
-        
-        .chat-display-area {
-            width: 100%; max-height: 280px; overflow-y: auto; background: #ffffff;
-            border: 1px solid var(--border-color); border-radius: 16px; padding: 15px; margin-bottom: 15px;
-            display: flex; flex-direction: column; gap: 10px; box-sizing: border-box;
-        }
+        .chat-display-area { width: 100%; max-height: 280px; overflow-y: auto; background: #ffffff; border: 1px solid var(--border-color); border-radius: 16px; padding: 15px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px; box-sizing: border-box; }
         .chat-bubble { padding: 12px 16px; border-radius: 14px; font-size: 14px; line-height: 1.5; max-width: 85%; }
         .chat-bubble.user { background: #e8f0fe; color: #1a73e8; align-self: flex-end; border-bottom-right-radius: 2px; }
         .chat-bubble.ai { background: #f8f9fa; color: #202124; align-self: flex-start; border-bottom-left-radius: 2px; border-left: 4px solid var(--primary); }
-
         .prompt-box { width: 100%; background: #f8f9fa; border: 1px solid #c4c7c5; border-radius: 28px; padding: 15px 20px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); text-align: left; position: relative; box-sizing: border-box; }
         .prompt-box textarea { width: 100%; border: none; background: transparent; resize: none; outline: none; font-size: 16px; font-family: 'Poppins', sans-serif; color: var(--text-color); }
         .prompt-actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 10px; }
@@ -141,160 +58,29 @@
         .icon-btn:hover { background: #e2e7ec; color: var(--primary); }
         .submit-btn { background: var(--primary); color: white; border: none; padding: 8px 18px; border-radius: 20px; cursor: pointer; font-weight: 500; font-size: 13px; }
         .submit-btn:hover { background: #1557b0; }
-
-        .plus-dropdown-menu {
-            position: absolute; bottom: 50px; left: 0; background: white;
-            border: 1px solid var(--border-color); border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15); display: none; flex-direction: column;
-            width: 220px; z-index: 1200; overflow: hidden;
-        }
-        .plus-dropdown-menu.show { display: flex; }
-        .dropdown-item { padding: 12px 15px; display: flex; align-items: center; gap: 10px; font-size: 14px; color: #3c4043; cursor: pointer; text-decoration: none; border-bottom: 1px solid #f1f3f4; }
-        .dropdown-item:hover { background: #f8f9fa; color: var(--primary); }
-        .dropdown-item i { font-size: 16px; color: var(--primary); }
-
         .section-header { font-size: 20px; font-weight: 700; color: #1a73e8; margin-top: 25px; margin-bottom: 12px; border-bottom: 2px solid #e2e7ec; padding-bottom: 5px; display: flex; align-items: center; gap: 10px; }
-        
-        .subject-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .sub-card {
-            background: #f8f9fa;
-            border: 1px solid #dadce0;
-            border-radius: 14px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-        }
-        .sub-card:hover {
-            border-color: var(--primary);
-            box-shadow: 0 6px 15px rgba(26,115,232,0.1);
-            transform: translateY(-2px);
-        }
-        .sub-card-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: #202124;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .sub-card-info {
-            font-size: 13px;
-            color: #5f6368;
-            display: flex;
-            justify-content: space-between;
-        }
-        .card-start-btn {
-            background: #e8f0fe;
-            color: #1a73e8;
-            border: none;
-            padding: 8px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 13px;
-            text-align: center;
-            transition: background 0.2s, color 0.2s;
-        }
-        .card-start-btn:hover {
-            background: #1a73e8;
-            color: white;
-        }
-
-        .pdf-upload-container {
-            background: linear-gradient(135deg, #f0f4f9 0%, #ffffff 100%);
-            border: 2.5px dashed #1a73e8;
-            border-radius: 20px;
-            padding: 40px 20px;
-            text-align: center;
-            margin-bottom: 20px;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 8px 25px rgba(26, 115, 232, 0.08);
-        }
-        .pdf-upload-container:hover {
-            background: linear-gradient(135deg, #e8f0fe 0%, #f8f9fa 100%);
-            border-color: #0b57d0;
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px rgba(26, 115, 232, 0.15);
-        }
-        .pdf-sticker-icon {
-            font-size: 54px;
-            color: #ea4335;
-            margin-bottom: 15px;
-            animation: bounceIcon 2s infinite ease-in-out;
-            filter: drop-shadow(0 4px 8px rgba(234, 67, 53, 0.2));
-        }
-        @keyframes bounceIcon {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-
-        .api-info-box {
-            background: #f8f9fa; border-left: 4px solid var(--primary);
-            padding: 15px 20px; border-radius: 8px; margin-bottom: 20px;
-            font-size: 14px; line-height: 1.6; color: #444746;
-        }
-        .api-info-box ol { margin: 8px 0 0 20px; padding: 0; }
-        .api-link { color: #1a73e8; font-weight: 600; text-decoration: underline; }
-
-        .quiz-header-bar {
-            display: flex; justify-content: space-between; align-items: center;
-            background: #1e1e2f; color: white; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px;
-        }
+        .subject-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .sub-card { background: #f8f9fa; border: 1px solid #dadce0; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 10px; transition: all 0.2s ease; }
+        .sub-card:hover { border-color: var(--primary); box-shadow: 0 6px 15px rgba(26,115,232,0.1); transform: translateY(-2px); }
+        .sub-card-title { font-size: 15px; font-weight: 600; color: #202124; display: flex; align-items: center; gap: 8px; }
+        .sub-card-info { font-size: 13px; color: #5f6368; display: flex; justify-content: space-between; }
+        .card-start-btn { background: #e8f0fe; color: #1a73e8; border: none; padding: 8px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; text-align: center; }
+        .card-start-btn:hover { background: #1a73e8; color: white; }
+        .pdf-upload-container { background: linear-gradient(135deg, #f0f4f9 0%, #ffffff 100%); border: 2.5px dashed #1a73e8; border-radius: 20px; padding: 40px 20px; text-align: center; margin-bottom: 20px; cursor: pointer; }
+        .pdf-sticker-icon { font-size: 54px; color: #ea4335; margin-bottom: 15px; }
+        .api-info-box { background: #f8f9fa; border-left: 4px solid var(--primary); padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; line-height: 1.6; color: #444746; }
+        .quiz-header-bar { display: flex; justify-content: space-between; align-items: center; background: #1e1e2f; color: white; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; }
         .timer-badge { background: #ff4757; color: white; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 6px; }
-        .ai-host-box {
-            background: linear-gradient(135deg, #2b2b40, #1e1e2f); color: #f1f2f6;
-            padding: 15px 20px; border-radius: 14px; margin-bottom: 20px; border-left: 5px solid #f39c12;
-            font-size: 15px; font-style: italic; display: flex; align-items: center; gap: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        .ai-host-box i { font-size: 24px; color: #f39c12; }
-
-        .ai-popup-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
-            display: flex; align-items: center; justify-content: center; z-index: 3000;
-        }
-        .ai-popup-box {
-            background: #ffffff; width: 90%; max-width: 650px; border-radius: 20px;
-            padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.25); display: flex; flex-direction: column; gap: 15px;
-            animation: zoomIn 0.25s ease; max-height: 85vh; overflow-y: auto;
-        }
-        @keyframes zoomIn {
-            from { transform: scale(0.9); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-        .ai-search-bar {
-            background: #f0f4f9; border: 1px solid #c4c7c5; border-radius: 14px;
-            padding: 12px 15px; display: flex; align-items: center; gap: 10px; font-size: 15px; color: #1f1f1f;
-        }
-        .ai-search-bar i { color: #1a73e8; }
-        .ai-detail-output {
-            background: #f8f9fa; border: 1px solid #e1e3e6; border-radius: 12px;
-            padding: 15px; max-height: 250px; overflow-y: auto; font-size: 14px; line-height: 1.6; color: #3c4043;
-        }
-
-        .generated-q-list {
-            background: #f8f9fa; border: 1px solid #e1e3e6; border-radius: 12px;
-            padding: 12px; max-height: 180px; overflow-y: auto; font-size: 13px; text-align: left;
-        }
+        .ai-host-box { background: linear-gradient(135deg, #2b2b40, #1e1e2f); color: #f1f2f6; padding: 15px 20px; border-radius: 14px; margin-bottom: 20px; border-left: 5px solid #f39c12; font-size: 15px; font-style: italic; display: flex; align-items: center; gap: 12px; }
+        .ai-popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 3000; }
+        .ai-popup-box { background: #ffffff; width: 90%; max-width: 650px; border-radius: 20px; padding: 25px; box-shadow: 0 20px 40px rgba(0,0,0,0.25); display: flex; flex-direction: column; gap: 15px; max-height: 85vh; overflow-y: auto; }
+        .ai-search-bar { background: #f0f4f9; border: 1px solid #c4c7c5; border-radius: 14px; padding: 12px 15px; display: flex; align-items: center; gap: 10px; font-size: 15px; color: #1f1f1f; }
+        .ai-detail-output { background: #f8f9fa; border: 1px solid #e1e3e6; border-radius: 12px; padding: 15px; max-height: 250px; overflow-y: auto; font-size: 14px; line-height: 1.6; color: #3c4043; }
+        .generated-q-list { background: #f8f9fa; border: 1px solid #e1e3e6; border-radius: 12px; padding: 12px; max-height: 180px; overflow-y: auto; font-size: 13px; text-align: left; }
         .generated-q-item { padding: 6px 0; border-bottom: 1px solid #eee; color: #3c4043; }
-
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; z-index: 2000; }
         .modal-box { background: white; padding: 30px; border-radius: 24px; max-width: 450px; width: 90%; box-shadow: 0 15px 35px rgba(0,0,0,0.2); text-align: center; }
         .modal-box input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #dadce0; border-radius: 12px; font-size: 15px; box-sizing: border-box; }
-
         .form-control { width: 100%; padding: 12px; margin-top: 8px; margin-bottom: 15px; border: 1px solid #dadce0; border-radius: 10px; box-sizing: border-box; font-family: 'Poppins', sans-serif; background: #fff; }
         .portal-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 10px; cursor: pointer; font-size: 15px; width: 100%; font-weight: 500; }
         .portal-btn:hover { background: #1557b0; }
@@ -333,9 +119,7 @@
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <span id="popup-auto-question">Question loading...</span>
             </div>
-            <div class="ai-detail-output" id="popup-ai-detail-content">
-                Gemini AI vistar se jawab taiyar kar raha hai...
-            </div>
+            <div class="ai-detail-output" id="popup-ai-detail-content">Gemini AI vistar se jawab taiyar kar raha hai...</div>
             <button class="portal-btn" onclick="closeAiPopupAndNext()">Agle Sawal Par Chalein ➡️</button>
         </div>
     </div>
@@ -343,7 +127,7 @@
     <div id="quiz-ready-popup" class="ai-popup-overlay hidden">
         <div class="ai-popup-box" style="text-align: center;">
             <h3 style="color: #1a73e8;"><i class="fa-solid fa-graduation-cap"></i> 20 Prashno ki Quiz Tayar Hai!</h3>
-            <p id="quiz-ready-desc" style="font-size: 14px; color: #5f6368; margin-bottom: 10px;">Aapke topic par AI ne 20 naye prashn generate kiye hain:</p>
+            <p id="quiz-ready-desc" style="font-size: 14px; color: #5f6368; margin-bottom: 10px;">Aapke topic par AI ne naye prashn generate kiye hain:</p>
             <div class="generated-q-list" id="generated-question-preview-list"></div>
             <button class="portal-btn" onclick="startGeneratedQuizFromChat()" style="margin-top: 15px;">🚀 Turant Start Quiz Karein</button>
             <button class="portal-btn" onclick="document.getElementById('quiz-ready-popup').classList.add('hidden')" style="background: #5f6368; margin-top: 8px;">❌ Cancel / Band Karein</button>
@@ -359,7 +143,7 @@
             </div>
         </div>
         <div class="header-right">
-            <select id="global-lang-switch" class="lang-select" onchange="changeLanguage()">
+            <select id="global-lang-switch" class="lang-select">
                 <option value="hi">हिंदी</option>
                 <option value="en">English</option>
             </select>
@@ -386,12 +170,11 @@
 
     <main class="main-workspace" id="mainWorkspaceArea">
         
-        <!-- Home Section with Normal AI Chat & 20-Q Generator Option -->
         <div id="home-section" class="hero-container active">
             <div class="hero-title" id="welcome-user-text">Hi Dashrath Suthar, what's the plan?</div>
             
             <div class="chat-display-area" id="homeChatDisplay">
-                <div class="chat-bubble ai">Namaste! Main QuizMind AI hoon. Aap mujhse koi bhi sawal ya topic par baat kar sakte hain, ya niche button click karke 20 prashno ki live quiz generate karwa sakte hain!</div>
+                <div class="chat-bubble ai">Namaste! Main QuizMind AI hoon. Aap mujhse kisi bhi topic par baat kar sakte hain ya niche button se quiz generate karwa sakte hain!</div>
             </div>
 
             <div class="prompt-box">
@@ -406,7 +189,7 @@
                     </div>
                     <div class="action-right">
                         <button class="submit-btn" onclick="handleHomeChatSend('chat')" style="background:#5f6368;">Ask AI (Chat)</button>
-                        <button class="submit-btn" onclick="handleHomeChatSend('quiz')">Generate 20-Q Quiz <i class="fa-solid fa-paper-plane"></i></button>
+                        <button class="submit-btn" onclick="handleHomeChatSend('quiz')">Generate Quiz <i class="fa-solid fa-paper-plane"></i></button>
                     </div>
                 </div>
             </div>
@@ -443,11 +226,10 @@
         <div id="api-section" class="content-card">
             <h2>🔑 Gemini API Key Settings</h2>
             <div class="api-info-box">
-                <b>Gemini API Key kaise prapt karein aur iske kya fayede hain:</b>
+                <b>Gemini API Key kaise prapt karein:</b>
                 <ol>
                     <li>Apne browser mein <a class="api-link" href="https://aistudio.google.com/" target="_blank">Google AI Studio</a> par jayein.</li>
-                    <li>Apne Google account se sign in karein aur **"Get API Key"** par click karein.</li>
-                    <li>Free API key generate karke copy karein aur niche diye gaye box mein paste karke **Save** karein.</li>
+                    <li>API Key generate karke copy karein aur yahan paste karke save karein.</li>
                 </ol>
             </div>
             <input type="password" id="api-key-input" class="form-control" placeholder="API Key yahan paste karein...">
@@ -491,15 +273,7 @@
         let quizTimer = null;
         let timeLeftSec = 15;
         let isAnswerLocked = false;
-        let availableVoices = [];
         let newlyGeneratedQuizPool = [];
-
-        const kahavateinList = [
-            "Aur ab... woh kshan aa chuka hai... jab sawal aapke samne hoga aur faisla aapke dimag mein!",
-            "Deviyo aur sajjanon, taiyar ho jaiye... agli chunouti ab aapki screen par dastak de rahi hai!",
-            "Ab jo sawal aane wala hai... uska jawab shayad aapki yaaddasht ke kisi kone mein chhipa baitha hai!",
-            "Janab, ab nazrein screen par aur dhadkanein samanya rakhiye... kyunki agla sawal hazir hai!"
-        ];
 
         const categoryData = {
             "rajasthan": {
@@ -569,23 +343,6 @@
         let currentIndex = 0;
         let score = 0;
 
-        window.speechSynthesis.onvoiceschanged = function() {
-            availableVoices = window.speechSynthesis.getVoices();
-        };
-
-        function speakText(text, isFemale = false, callback) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                let utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'hi-IN';
-                let voices = window.speechSynthesis.getVoices();
-                let selectedVoice = voices.find(v => v.lang.includes('hi')) || voices[0];
-                if (selectedVoice) utterance.voice = selectedVoice;
-                if(callback) utterance.onend = callback;
-                window.speechSynthesis.speak(utterance);
-            } else if(callback) { callback(); }
-        }
-
         function submitUserAuth() {
             let nameInput = document.getElementById('user-name-input').value.trim();
             if(nameInput) {
@@ -638,7 +395,7 @@
                 sessionStorage.setItem('quizmind_admin_token', 'mock_admin_token');
                 switchTab('admin-section');
             } else {
-                alert('Ghalat Password! Kripya sahi password (Love12) daalein.');
+                alert('Galat Password! Sahi password (Love12) daalein.');
             }
         }
 
@@ -697,7 +454,6 @@
             }
         }
 
-        // Updated Home Chat Handler supporting both Normal Chat and 20-Q Quiz generation
         async function handleHomeChatSend(mode = 'chat') {
             let inputField = document.getElementById('home-chat-input');
             let query = inputField.value.trim();
@@ -715,27 +471,22 @@
             if(!apiKey) {
                 let errBubble = document.createElement('div');
                 errBubble.className = 'chat-bubble ai';
-                errBubble.innerText = "Error: Kripya pehle API Settings mein jaakar apni Gemini API Key save karein!";
+                errBubble.innerText = "Error: Pehle API Settings mein apni Gemini API Key save karein!";
                 chatDisplay.appendChild(errBubble);
                 return;
             }
 
             let loadingBubble = document.createElement('div');
             loadingBubble.className = 'chat-bubble ai';
-            loadingBubble.innerText = mode === 'quiz' ? "AI 20 prashno ki quiz taiyar kar raha hai..." : "AI jawab taiyar kar raha hai...";
+            loadingBubble.innerText = mode === 'quiz' ? "AI quiz generate kar raha hai..." : "AI jawab taiyar kar raha hai...";
             chatDisplay.appendChild(loadingBubble);
             chatDisplay.scrollTop = chatDisplay.scrollHeight;
 
             try {
                 if (mode === 'quiz') {
                     let prompt = `Topic: "${query}". Generate EXACTLY 20 multiple choice questions in valid JSON format with keys: questions (array of objects containing question, options [4 items], answer, detail). Only give valid JSON.`;
-                    let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`, {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                    });
-                    let data = await response.json();
-                    let textRes = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-                    let cleanRes = textRes.replace(/```json/g, "").replace(/```/g, "").trim();
+                    let rawText = await qmGemini(prompt);
+                    let cleanRes = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
                     let parsedObj = JSON.parse(cleanRes);
                     newlyGeneratedQuizPool = parsedObj.questions || parsedObj;
 
@@ -752,13 +503,7 @@
                     document.getElementById('quiz-ready-desc').innerText = `Topic "${query}" par AI ne prashn generate kiye hain:`;
                     document.getElementById('quiz-ready-popup').classList.remove('hidden');
                 } else {
-                    let prompt = `User query: "${query}". Give a clear, helpful and factual answer in Hindi.`;
-                    let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`, {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                    });
-                    let data = await response.json();
-                    let ansText = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Jawab uplabdh nahi ho saka.';
+                    let ansText = await qmGemini(`User query: "${query}". Give a clear, helpful and factual answer in Hindi.`);
                     loadingBubble.innerText = ansText;
                 }
                 chatDisplay.scrollTop = chatDisplay.scrollHeight;
@@ -780,7 +525,7 @@
         function startQuiz(subjectKey) {
             let subQuestions = masterDB[subjectKey] || [];
             if(subQuestions.length === 0) {
-                alert('Is subject mein abhi prashn uplabdh nahi hain. Kripya Admin Panel ya PDF upload se jodein!');
+                alert('Is subject mein abhi prashn uplabdh nahi hain. Admin Panel ya PDF upload se jodein!');
                 return;
             }
             currentQuizQuestions = subQuestions.sort(() => 0.5 - Math.random()).slice(0, 10);
@@ -855,7 +600,6 @@
             else { alert('Kripya valid API key daalein.'); }
         }
 
-        // Safe Admin AI Question Generation with robust fallback to prevent 'undefined (reading 0)' error
         async function addQuestionViaAI() {
             let apiKey = localStorage.getItem('gemini_api_key');
             if(!apiKey) return alert('Pehle API Key save karein!');
@@ -866,19 +610,8 @@
             alert('AI options generate kar raha hai...');
             let prompt = `Based on question: "${rawQ}", generate 4 options, correct answer, and detailed explanation in JSON format with keys: question, options (array of 4), answer, detail. Only return valid JSON.`;
             try {
-                let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                });
-                let data = await response.json();
-                
-                // Safe checks to avoid undefined properties error
-                if (!data || !data.candidates || data.candidates.length === 0 || !data.candidates[0].content) {
-                    throw new Error('AI se valid response nahi mila. Dobara koshish karein.');
-                }
-                
-                let textRes = data.candidates[0].content.parts[0].text;
-                let cleanRes = textRes.replace(/```json/g, "").replace(/```/g, "").trim();
+                let rawText = await qmGemini(prompt);
+                let cleanRes = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
                 let parsedObj = JSON.parse(cleanRes);
                 
                 parsedObj.id = 'q_' + Date.now();
@@ -895,10 +628,31 @@
             let count = Number(document.getElementById('pdf-question-count').value) || 20;
             document.getElementById('pdf-status-text').innerText = 'AI PDF padh raha hai aur questions bana raha hai...';
             
-            setTimeout(() => {
-                document.getElementById('pdf-status-text').innerHTML = `<span style="color:green;">PDF se ${count} prashn safalpurvak ban gaye aur quiz mein jod diye gaye!</span>`;
-                alert('PDF quiz successfully generated!');
-            }, 1500);
+            let apiKey = localStorage.getItem('gemini_api_key');
+            if(!apiKey) return alert('Pehle API Settings mein Gemini API Key daalein!');
+
+            try {
+                let prompt = `Generate ${count} multiple choice questions from educational content in valid JSON format with keys: questions (array of objects with question, options [4 items], answer, detail). Only give valid JSON.`;
+                let rawText = await qmGemini(prompt);
+                let cleanRes = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
+                let parsedObj = JSON.parse(cleanRes);
+                newlyGeneratedQuizPool = parsedObj.questions || parsedObj;
+
+                document.getElementById('pdf-status-text').innerHTML = `<span style="color:green;">PDF se ${newlyGeneratedQuizPool.length} prashn tayar hain!</span>`;
+                
+                let previewListContainer = document.getElementById('generated-question-preview-list');
+                previewListContainer.innerHTML = '';
+                newlyGeneratedQuizPool.forEach((q, idx) => {
+                    let item = document.createElement('div');
+                    item.className = 'generated-q-item';
+                    item.innerText = `${idx + 1}. ${q.question}`;
+                    previewListContainer.appendChild(item);
+                });
+                document.getElementById('quiz-ready-desc').innerText = `PDF se ${newlyGeneratedQuizPool.length} prashn safalpurvak ban gaye hain:`;
+                document.getElementById('quiz-ready-popup').classList.remove('hidden');
+            } catch (error) {
+                document.getElementById('pdf-status-text').innerHTML = `<span style="color:red;">Error: ${error.message}</span>`;
+            }
         }
     </script>
 </body>
