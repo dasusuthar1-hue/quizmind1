@@ -119,7 +119,7 @@
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <span id="popup-auto-question">Question loading...</span>
             </div>
-            <div class="ai-detail-output" id="popup-ai-detail-content">Gemini AI vistar se jawab taiyar kar raha hai...</div>
+            <div class="ai-detail-output" id="popup-ai-detail-content">AI vistar se jawab taiyar kar raha hai...</div>
             <button class="portal-btn" onclick="closeAiPopupAndNext()">Agle Sawal Par Chalein ➡️</button>
         </div>
     </div>
@@ -147,7 +147,7 @@
                 <option value="hi">हिंदी</option>
                 <option value="en">English</option>
             </select>
-            <button class="api-key-btn" onclick="handleTabToggle('api-section')"><i class="fa-solid fa-key"></i> API Key</button>
+            <button class="api-key-btn" onclick="handleTabToggle('api-section')"><i class="fa-solid fa-key"></i> API Settings</button>
         </div>
     </header>
 
@@ -174,7 +174,7 @@
             <div class="hero-title" id="welcome-user-text">Hi Dashrath Suthar, what's the plan?</div>
             
             <div class="chat-display-area" id="homeChatDisplay">
-                <div class="chat-bubble ai">Namaste! Main QuizMind AI hoon. Aap mujhse kisi bhi topic par baat kar sakte hain ya niche button se quiz generate karwa sakte hain!</div>
+                <div class="chat-bubble ai">Namaste! Main QuizMind AI hoon. Aap mujhse kisi bhi topic par chat kar sakte hain ya niche button se quiz generate karwa sakte hain!</div>
             </div>
 
             <div class="prompt-box">
@@ -188,8 +188,8 @@
                         </div>
                     </div>
                     <div class="action-right">
-                        <button class="submit-btn" onclick="handleHomeChatSend('chat')" style="background:#5f6368;">Ask AI (Chat)</button>
-                        <button class="submit-btn" onclick="handleHomeChatSend('quiz')">Generate Quiz <i class="fa-solid fa-paper-plane"></i></button>
+                        <button class="submit-btn" onclick="handleHomeChatSend('chat')" style="background:#5f6368;">Ask Groq Chat</button>
+                        <button class="submit-btn" onclick="handleHomeChatSend('quiz')">Generate Quiz (Groq) <i class="fa-solid fa-paper-plane"></i></button>
                     </div>
                 </div>
             </div>
@@ -206,12 +206,12 @@
             <select id="admin-subject-select" class="form-control"></select>
             <label>Sirf Sawal Likhein:</label>
             <textarea id="admin-question-input" class="form-control" rows="3" placeholder="Sawal likhein..."></textarea>
-            <button class="portal-btn" onclick="addQuestionViaAI()">✨ AI se Sawal Generate Karein</button>
+            <button class="portal-btn" onclick="addQuestionViaAI()">✨ Groq AI se Sawal Generate Karein</button>
             <button class="portal-btn" onclick="switchTab('home-section')" style="background: #5f6368; margin-top: 10px;">⬅️ Wapas Home Par Jayein</button>
         </div>
 
         <div id="pdf-section" class="content-card">
-            <h2>📂 PDF Quiz & Notes Generator</h2>
+            <h2>📂 PDF Quiz & Notes Generator (Gemini Powered)</h2>
             <div class="pdf-upload-container" onclick="document.getElementById('pdf-file-input').click()">
                 <div class="pdf-sticker-icon"><i class="fa-solid fa-file-pdf"></i></div>
                 <p style="margin: 0; font-weight: 600; color: #202124; font-size: 16px;">Apni PDF ya notes yahan drop karein ya click karke chunein</p>
@@ -220,25 +220,30 @@
             <input type="file" id="pdf-file-input" class="hidden" accept=".pdf,.txt" onchange="handlePdfUpload(this)">
             <input id="pdf-question-count" type="number" min="5" max="50" value="20" class="form-control" placeholder="Questions count">
             <div id="pdf-status-text" style="font-weight: 500; color: green; margin-bottom: 15px; text-align: center;"></div>
-            <button class="portal-btn" onclick="processPdfToQuiz()">🚀 PDF se Quiz Banayein</button>
+            <button class="portal-btn" onclick="processPdfToQuiz()">🚀 Gemini se PDF Quiz Banayein</button>
         </div>
 
         <div id="api-section" class="content-card">
-            <h2>🔑 Gemini API Key Settings</h2>
+            <h2>🔑 API Key Settings (Gemini & Groq)</h2>
             <div class="api-info-box">
-                <b>Gemini API Key kaise prapt karein:</b>
+                <b>Dono APIs ke liye keys yahan save karein:</b>
                 <ol>
-                    <li>Apne browser mein <a class="api-link" href="https://aistudio.google.com/" target="_blank">Google AI Studio</a> par jayein.</li>
-                    <li>API Key generate karke copy karein aur yahan paste karke save karein.</li>
+                    <li><b>Groq API Key:</b> Chat aur Quiz generation ke liye (<a class="api-link" href="https://console.groq.com/" target="_blank">Get Groq Key</a>)</li>
+                    <li><b>Gemini API Key:</b> PDF se quiz banane ke liye (<a class="api-link" href="https://aistudio.google.com/" target="_blank">Get Gemini Key</a>)</li>
                 </ol>
             </div>
-            <input type="password" id="api-key-input" class="form-control" placeholder="API Key yahan paste karein...">
-            <button class="portal-btn" onclick="saveApiKey()">💾 Save API Key</button>
+            <label><b>Groq API Key (Chat & Quiz ke liye):</b></label>
+            <input type="password" id="groq-key-input" class="form-control" placeholder="gsk_...">
+            
+            <label style="margin-top:10px; display:block;"><b>Gemini API Key (PDF Quiz ke liye):</b></label>
+            <input type="password" id="gemini-key-input" class="form-control" placeholder="AIza...">
+            
+            <button class="portal-btn" onclick="saveApiKeys()" style="margin-top:10px;">💾 Saari API Keys Save Karein</button>
         </div>
 
         <div id="about-section" class="content-card">
             <h2>👨‍💻 Developer Team</h2>
-            <p>Designed for Dashrath Suthar with Advanced AI Framework.</p>
+            <p>Designed for Dashrath Suthar with Advanced Groq & Gemini AI Framework.</p>
         </div>
 
         <div id="quiz-screen" class="content-card">
@@ -342,6 +347,19 @@
         let currentQuizQuestions = [];
         let currentIndex = 0;
         let score = 0;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if(localStorage.getItem('groq_api_key')) document.getElementById('groq-key-input').value = localStorage.getItem('groq_api_key');
+            if(localStorage.getItem('gemini_api_key')) document.getElementById('gemini-key-input').value = localStorage.getItem('gemini_api_key');
+        });
+
+        function saveApiKeys() {
+            let gKey = document.getElementById('groq-key-input').value.trim();
+            let gmKey = document.getElementById('gemini-key-input').value.trim();
+            if(gKey) localStorage.setItem('groq_api_key', gKey);
+            if(gmKey) localStorage.setItem('gemini_api_key', gmKey);
+            alert('API Keys Safalpurvak Save Ho Gayi Hain!');
+        }
 
         function submitUserAuth() {
             let nameInput = document.getElementById('user-name-input').value.trim();
@@ -454,6 +472,7 @@
             }
         }
 
+        // Home chat & quiz using Groq API
         async function handleHomeChatSend(mode = 'chat') {
             let inputField = document.getElementById('home-chat-input');
             let query = inputField.value.trim();
@@ -467,25 +486,16 @@
             inputField.value = '';
             chatDisplay.scrollTop = chatDisplay.scrollHeight;
 
-            let apiKey = localStorage.getItem('gemini_api_key');
-            if(!apiKey) {
-                let errBubble = document.createElement('div');
-                errBubble.className = 'chat-bubble ai';
-                errBubble.innerText = "Error: Pehle API Settings mein apni Gemini API Key save karein!";
-                chatDisplay.appendChild(errBubble);
-                return;
-            }
-
             let loadingBubble = document.createElement('div');
             loadingBubble.className = 'chat-bubble ai';
-            loadingBubble.innerText = mode === 'quiz' ? "AI quiz generate kar raha hai..." : "AI jawab taiyar kar raha hai...";
+            loadingBubble.innerText = mode === 'quiz' ? "Groq AI quiz generate kar raha hai..." : "Groq AI jawab taiyar kar raha hai...";
             chatDisplay.appendChild(loadingBubble);
             chatDisplay.scrollTop = chatDisplay.scrollHeight;
 
             try {
                 if (mode === 'quiz') {
                     let prompt = `Topic: "${query}". Generate EXACTLY 20 multiple choice questions in valid JSON format with keys: questions (array of objects containing question, options [4 items], answer, detail). Only give valid JSON.`;
-                    let rawText = await qmGemini(prompt);
+                    let rawText = await callGroqAI(prompt);
                     let cleanRes = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
                     let parsedObj = JSON.parse(cleanRes);
                     newlyGeneratedQuizPool = parsedObj.questions || parsedObj;
@@ -500,10 +510,10 @@
                         item.innerText = `${idx + 1}. ${q.question}`;
                         previewListContainer.appendChild(item);
                     });
-                    document.getElementById('quiz-ready-desc').innerText = `Topic "${query}" par AI ne prashn generate kiye hain:`;
+                    document.getElementById('quiz-ready-desc').innerText = `Topic "${query}" par Groq AI ne prashn generate kiye hain:`;
                     document.getElementById('quiz-ready-popup').classList.remove('hidden');
                 } else {
-                    let ansText = await qmGemini(`User query: "${query}". Give a clear, helpful and factual answer in Hindi.`);
+                    let ansText = await callGroqAI(`User query: "${query}". Give a clear, helpful and factual answer in Hindi.`);
                     loadingBubble.innerText = ansText;
                 }
                 chatDisplay.scrollTop = chatDisplay.scrollHeight;
@@ -594,23 +604,15 @@
             document.getElementById('score-card').innerText = `Aapka Score: ${score} / ${currentQuizQuestions.length}`;
         }
 
-        function saveApiKey() {
-            let key = document.getElementById('api-key-input').value.trim();
-            if(key) { localStorage.setItem('gemini_api_key', key); alert('API Key Saved Successfully!'); }
-            else { alert('Kripya valid API key daalein.'); }
-        }
-
         async function addQuestionViaAI() {
-            let apiKey = localStorage.getItem('gemini_api_key');
-            if(!apiKey) return alert('Pehle API Key save karein!');
             let subject = document.getElementById('admin-subject-select').value;
             let rawQ = document.getElementById('admin-question-input').value.trim();
             if(!rawQ) return alert('Kripya prashn likhein.');
 
-            alert('AI options generate kar raha hai...');
+            alert('Groq AI options generate kar raha hai...');
             let prompt = `Based on question: "${rawQ}", generate 4 options, correct answer, and detailed explanation in JSON format with keys: question, options (array of 4), answer, detail. Only return valid JSON.`;
             try {
-                let rawText = await qmGemini(prompt);
+                let rawText = await callGroqAI(prompt);
                 let cleanRes = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
                 let parsedObj = JSON.parse(cleanRes);
                 
@@ -626,14 +628,11 @@
             let fileInput = document.getElementById('pdf-file-input');
             if(!fileInput.files || fileInput.files.length === 0) return alert('Kripya pehle PDF file chunein!');
             let count = Number(document.getElementById('pdf-question-count').value) || 20;
-            document.getElementById('pdf-status-text').innerText = 'AI PDF padh raha hai aur questions bana raha hai...';
+            document.getElementById('pdf-status-text').innerText = 'Gemini AI PDF padh raha hai aur questions bana raha hai...';
             
-            let apiKey = localStorage.getItem('gemini_api_key');
-            if(!apiKey) return alert('Pehle API Settings mein Gemini API Key daalein!');
-
             try {
                 let prompt = `Generate ${count} multiple choice questions from educational content in valid JSON format with keys: questions (array of objects with question, options [4 items], answer, detail). Only give valid JSON.`;
-                let rawText = await qmGemini(prompt);
+                let rawText = await callGeminiAI(prompt);
                 let cleanRes = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
                 let parsedObj = JSON.parse(cleanRes);
                 newlyGeneratedQuizPool = parsedObj.questions || parsedObj;
